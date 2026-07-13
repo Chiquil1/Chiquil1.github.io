@@ -2,7 +2,7 @@
   "name": "plugins-compiler",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc --skipLibCheck true && node build.js"
+    "build": "tsc --project . --skipLibCheck true && node build.js"
   },
   "dependencies": {
     "cheerio": "^1.2.0"
