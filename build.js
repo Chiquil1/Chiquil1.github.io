@@ -15,7 +15,7 @@ try {
   console.error('❌ Error al leer rncalation.js:', err);
 }
 
-// 2. Metadatos del plugin individual
+// 2. Metadatos del plugin
 const pluginJson = {
   id: "rncalation",
   name: "RNCALATION",
@@ -26,15 +26,19 @@ const pluginJson = {
   code: pluginCode
 };
 
-// 3. Crear la carpeta .dist si no existe para imitar el repositorio original
+// 3. Crear la carpeta .dist si no existe
 const distDir = path.join(__dirname, '.dist');
 if (!fs.existsSync(distDir)) {
   fs.mkdirSync(distDir);
 }
 
-// 4. LNReader requiere un ARREGLO (plural) de plugins, no el objeto solo
+// 4. Forzar a GitHub Pages a incluir carpetas con punto (.) creando .nojekyll
+fs.writeFileSync(path.join(__dirname, '.nojekyll'), ''); 
+fs.writeFileSync(path.join(distDir, '.nojekyll'), ''); // Opcional, en ambas por seguridad
+
+// 5. LNReader requiere un ARREGLO de plugins
 const repoData = [pluginJson];
 
-const target = path.join(distDir, 'plugins.min.json'); // Nota el plural 'plugins'
+const target = path.join(distDir, 'plugins.min.json');
 fs.writeFileSync(target, JSON.stringify(repoData, null, 2));
-console.log('✅ Archivo .dist/plugins.min.json generado correctamente en formato de lista');
+console.log('✅ Archivo .dist/plugins.min.json y .nojekyll generados correctamente');
