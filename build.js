@@ -2,7 +2,6 @@ const fs = require('fs');
 const path = require('path');
 
 // 1. Ruta del JavaScript ya compilado por TypeScript
-// (Si tsc lo genera en la raíz como rncalation.js, usamos esta ruta)
 const codePath = path.join(__dirname, 'rncalation.js'); 
 
 let pluginCode = "";
@@ -16,7 +15,7 @@ try {
   console.error('❌ Error al leer rncalation.js:', err);
 }
 
-// 2. Estructura que LNReader espera con el código fuente inyectado
+// 2. Metadatos del plugin individual
 const pluginJson = {
   id: "rncalation",
   name: "RNCALATION",
@@ -24,9 +23,18 @@ const pluginJson = {
   site: "https://rncalation.online",
   version: "1.0.0",
   webStorageUtilized: true,
-  code: pluginCode // <--- Aquí se inyecta el código completo del scraper
+  code: pluginCode
 };
 
-const target = path.join(__dirname, 'plugin.min.json');
-fs.writeFileSync(target, JSON.stringify(pluginJson, null, 2));
-console.log('✅ Archivo plugin.min.json generado correctamente con el código embebido');
+// 3. Crear la carpeta .dist si no existe para imitar el repositorio original
+const distDir = path.join(__dirname, '.dist');
+if (!fs.existsSync(distDir)) {
+  fs.mkdirSync(distDir);
+}
+
+// 4. LNReader requiere un ARREGLO (plural) de plugins, no el objeto solo
+const repoData = [pluginJson];
+
+const target = path.join(distDir, 'plugins.min.json'); // Nota el plural 'plugins'
+fs.writeFileSync(target, JSON.stringify(repoData, null, 2));
+console.log('✅ Archivo .dist/plugins.min.json generado correctamente en formato de lista');
