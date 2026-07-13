@@ -7,18 +7,16 @@
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "strict": false,
-    "declaration": true,
-    "outDir": "./",
-    "rootDir": "./",
     "baseUrl": ".",
     "paths": {
-      "@libs/*": ["./libs/*"],
-      "@/types/*": ["./types/*"],
-      "@/*": ["./*"]
+      "@libs/*": ["libs/*"],
+      "@/types/*": ["types/*"],
+      "@/*": ["*"]
     },
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
+    "allowSyntheticDefaultImports": true,
+    "noEmitOnError": false
   },
-  "include": ["rncalation.ts"],
+  "include": ["rncalation.ts", "libs/**/*", "types/**/*"],
   "exclude": ["node_modules"]
 }

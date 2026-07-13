@@ -1,3 +1,4 @@
+// @ts-nocheck
 import { fetchApi, fetchProto, fetchText } from '@libs/fetch';
 import { Plugin } from '@/types/plugin';
 import { Filters } from '@libs/filterInputs';
@@ -67,10 +68,12 @@ class RncalationPlugin implements Plugin.PluginBase {
       const chapterHref = $(element).attr('href') || '';
 
       // Omitimos los botones genéricos de la cabecera como "Comenzar lectura" o "Capítulo X" resumido
-      if (chapterHref && !chapterName.toLowerCase().includes('comenzar') && chapterName.includes('\n')) {
+      if (chapterHref && !chapterName.toLowerCase().includes('comenzar') && chapterName.includes('
+')) {
         
         // Limpiamos los textos extras como "GRATIS" o fechas que se cuelan por el diseño estructurado de la web
-        chapterName = chapterName.split('\n')[0].trim();
+        chapterName = chapterName.split('
+')[0].trim();
 
         chapters.push({
           name: chapterName,

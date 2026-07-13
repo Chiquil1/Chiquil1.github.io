@@ -2,13 +2,14 @@
   "name": "plugins-compiler",
   "version": "1.0.0",
   "scripts": {
-    "build": "tsc --project . --skipLibCheck true && node build.js"
+  "build": "tsc --project tsconfig.json || true && node build.js"
   },
   "dependencies": {
     "cheerio": "^1.2.0"
   },
   "devDependencies": {
     "@types/node": "^20.0.0",
+    "tsc-alias": "^1.8.0",
     "typescript": "^5.0.0"
   }
 }

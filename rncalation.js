@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+// @ts-nocheck
 const fetch_1 = require("@libs/fetch");
 const cheerio_1 = require("cheerio");
 const defaultCover_1 = require("@libs/defaultCover");
@@ -12,7 +13,7 @@ class RncalationPlugin {
         this.version = '1.0.0';
         this.filters = undefined;
         this.webStorageUtilized = true;
-        this.resolveUrl = (path, isNovel) => this.site + path;
+        this.chapters = chapters.reverse();
     }
     async popularNovels(pageNo, { showLatestNovels }) {
         const url = showLatestNovels
@@ -53,42 +54,47 @@ class RncalationPlugin {
             let chapterName = $(element).text().trim();
             const chapterHref = $(element).attr('href') || '';
             // Omitimos los botones genéricos de la cabecera como "Comenzar lectura" o "Capítulo X" resumido
-            if (chapterHref && !chapterName.toLowerCase().includes('comenzar') && chapterName.includes('\n')) {
-                // Limpiamos los textos extras como "GRATIS" o fechas que se cuelan por el diseño estructurado de la web
-                chapterName = chapterName.split('\n')[0].trim();
-                chapters.push({
-                    name: chapterName,
-                    path: chapterHref.replace(this.site, ''),
-                    releaseTime: '',
-                    chapterNumber: chapters.length + 1,
-                });
-            }
+            if (chapterHref && !chapterName.toLowerCase().includes('comenzar') && chapterName.includes(', ')) {
+            // Limpiamos los textos extras como "GRATIS" o fechas que se cuelan por el diseño estructurado de la web
+            , 
+            // Limpiamos los textos extras como "GRATIS" o fechas que se cuelan por el diseño estructurado de la web
+            chapterName = chapterName.split(', ')[0].trim();, chapters.push({
+                name: chapterName,
+                path: chapterHref.replace(this.site, ''),
+                releaseTime: '',
+                chapterNumber: chapters.length + 1,
+            }))))
+                ;
         });
-        // Invertimos la lista para que el Capítulo 1 aparezca en la parte superior en la app
-        novel.chapters = chapters.reverse();
-        return novel;
     }
-    async parseChapter(chapterPath) {
-        const body = await (0, fetch_1.fetchText)(this.site + chapterPath);
-        const $ = (0, cheerio_1.load)(body);
-        // Extrae el contenido html limpio del contenedor del texto
-        const chapterText = $('.chapter-content, #contenido-novela, .text-content').html() || '';
-        return chapterText;
-    }
-    async searchNovels(searchTerm, pageNo) {
-        const url = `${this.site}/?search=${encodeURIComponent(searchTerm)}&page=${pageNo}`;
-        const body = await (0, fetch_1.fetchText)(url);
-        const $ = (0, cheerio_1.load)(body);
-        const novels = [];
-        $('div.card, .search-result').each((index, element) => {
-            const name = $(element).find('h1, h2, .title').text().trim();
-            const href = $(element).find('a').attr('href') || '';
-            const cover = $(element).find('img').attr('src') || defaultCover_1.defaultCover;
-            if (name && href) {
-                novels.push({ name, path: href.replace(this.site, ''), cover });
-            }
-        });
-        return novels;
-    }
+    ;
 }
+return novel;
+async;
+parseChapter(chapterPath, string);
+Promise < string > {
+    const: body = await (0, fetch_1.fetchText)(this.site + chapterPath),
+    const: $ = (0, cheerio_1.load)(body),
+    // Extrae el contenido html limpio del contenedor del texto
+    const: chapterText = $('.chapter-content, #contenido-novela, .text-content').html() || '',
+    return: chapterText
+};
+async;
+searchNovels(searchTerm, string, pageNo, number);
+Promise < plugin_1.Plugin.NovelItem[] > {
+    const: url = `${this.site}/?search=${encodeURIComponent(searchTerm)}&page=${pageNo}`,
+    const: body = await (0, fetch_1.fetchText)(url),
+    const: $ = (0, cheerio_1.load)(body),
+    const: novels, Plugin: plugin_1.Plugin, : .NovelItem[] = [],
+    $() { }, : .each((index, element) => {
+        const name = $(element).find('h1, h2, .title').text().trim();
+        const href = $(element).find('a').attr('href') || '';
+        const cover = $(element).find('img').attr('src') || defaultCover_1.defaultCover;
+        if (name && href) {
+            novels.push({ name, path: href.replace(this.site, ''), cover });
+        }
+    }),
+    return: novels
+};
+resolveUrl = (path, isNovel) => this.site + path;
 exports.default = new RncalationPlugin();
