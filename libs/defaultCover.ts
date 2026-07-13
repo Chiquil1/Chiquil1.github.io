@@ -1,1 +1,1 @@
-export const defaultCover: any = '';
+export const defaultCover = any;

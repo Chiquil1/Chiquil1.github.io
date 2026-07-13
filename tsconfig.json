@@ -17,6 +17,6 @@
     "allowSyntheticDefaultImports": true,
     "noEmitOnError": false
   },
-  "include": ["rncalation.ts", "libs/**/*", "types/**/*"],
+  "include": ["src/spanish/rncalation/rncalation.ts", "libs/**/*", "types/**/*"],
   "exclude": ["node_modules"]
 }

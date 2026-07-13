@@ -1,1 +1,1 @@
-export const NovelStatus: any = {} as any;
+export const novelStatus = any;
