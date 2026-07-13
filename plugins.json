@@ -1,0 +1,16 @@
+{
+  "id": "Chiquil1-plugins",
+  "name": "Chiquil1 Repositorio",
+  "url": "https://chiquil1.github.io/plugins.json",
+  "plugins": [
+    {
+      "id": "rncalation",
+      "name": "RNCALATION",
+      "site": "https://rncalation.online",
+      "version": "1.0.0",
+      "url": "https://raw.githubusercontent.com/Chiquil1/Chiquil1.github.io/main/rncalation.ts",
+      "iconUrl": "https://raw.githubusercontent.com/Chiquil1/Chiquil1.github.io/main/src/spanish/rncalation/icon.png",
+      "lang": "Spanish"
+    }
+  ]
+}
