@@ -2,23 +2,20 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 // @ts-nocheck
 const fetch_1 = require("@libs/fetch");
-const cheerio_1 = require("cheerio");
 const defaultCover_1 = require("@libs/defaultCover");
+const cheerio_1 = require("cheerio");
 class RncalationPlugin {
     constructor() {
         this.id = 'rncalation';
         this.name = 'RNCALATION';
-        this.icon = 'src/spanish/rncalation/icon.png';
-        this.site = 'https://rncalation.online';
+        this.site = 'https://rncalation.online/';
         this.version = '1.0.0';
+        this.icon = 'src/spanish/rncalation/icon.png';
         this.filters = undefined;
-        this.webStorageUtilized = true;
         this.resolveUrl = (path, isNovel) => this.site + path;
     }
-    async popularNovels(pageNo, { showLatestNovels }) {
-        const url = showLatestNovels
-            ? `${this.site}/?page=${pageNo}&sort=latest`
-            : `${this.site}/?page=${pageNo}&sort=popular`;
+    async popularNovels(pageNo, options) {
+        const url = `${this.site}?page=${pageNo}&sort=popular`;
         const body = await (0, fetch_1.fetchText)(url);
         const $ = (0, cheerio_1.load)(body);
         const novels = [];
@@ -45,10 +42,10 @@ class RncalationPlugin {
         const novel = {
             path: novelPath,
             name: $('h1').first().text().trim() || 'Novela sin título',
-            cover: $('.comic-cover img, .cover-container img, img.comic-cover__img').first().attr('src') || defaultCover_1.defaultCover,
-            summary: $('.comic-description, .synopsis, .description, #sinopsis, p').first().text().trim(),
         };
-        const chapters = [];
+        novel.cover = $('.comic-cover img, .cover-container img, img.comic-cover__img').first().attr('src') || defaultCover_1.defaultCover;
+        novel.summary = $('.comic-description, .synopsis, .description, #sinopsis, p').first().text().trim();
+        const novelChapters = [];
         $('a[href*="/cap/"]').each((index, element) => {
             let chapterName = $(element).text().trim();
             const chapterHref = $(element).attr('href') || '';
@@ -56,25 +53,43 @@ class RncalationPlugin {
                 if (chapterName.includes(', ')) {
                     chapterName = chapterName.split(', ')[0].trim();
                 }
-                chapters.push({
+                novelChapters.push({
                     name: chapterName,
                     path: chapterHref.replace(this.site, ''),
                     releaseTime: '',
-                    chapterNumber: chapters.length + 1,
+                    chapterNumber: novelChapters.length + 1,
                 });
             }
         });
-        novel.chapters = chapters.reverse();
+        novel.chapters = novelChapters.reverse();
         return novel;
     }
     async parseChapter(chapterPath) {
         const body = await (0, fetch_1.fetchText)(this.site + chapterPath);
         const $ = (0, cheerio_1.load)(body);
-        const chapterText = $('.chapter-content, #contenido-novela, .text-content').html() || '';
-        return chapterText;
+        // Extraer contenido HTML
+        let chapterHtml = $('.chapter-content, #contenido-novela, .text-content').html() || '';
+        if (!chapterHtml)
+            return '';
+        const $chapter = (0, cheerio_1.load)(chapterHtml);
+        // Limpieza de scripts, anuncios y basura igual al ejemplo de SkyNovels
+        $chapter('script, style, ins, .chapter-ad, .adsbygoogle, .hidden, [style*="display:none"]').remove();
+        // Limpieza específica para optimizar el lector TTS de Moon+ Reader / LNReader
+        $chapter('*').contents().each((_, element) => {
+            if (element.type === 'text' && element.data) {
+                let text = element.data;
+                text = text.replace(/[\u200B-\u200D\uFEFF\u200E\u200F\u202A-\u202E]/g, ''); // Caracteres invisibles
+                text = text.replace(/[\\\/]+/g, '') // Barras duplicadas
+                    .replace(/[—––─]/g, '-') // Rayas de diálogo orientales
+                    .replace(/[\*_~|•♦¤°]/g, '') // Adornos
+                    .trim();
+                element.data = text;
+            }
+        });
+        return $chapter.html();
     }
     async searchNovels(searchTerm, pageNo) {
-        const url = `${this.site}/?search=${encodeURIComponent(searchTerm)}&page=${pageNo}`;
+        const url = `${this.site}?search=${encodeURIComponent(searchTerm)}&page=${pageNo}`;
         const body = await (0, fetch_1.fetchText)(url);
         const $ = (0, cheerio_1.load)(body);
         const novels = [];
